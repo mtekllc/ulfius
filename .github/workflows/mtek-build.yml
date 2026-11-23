@@ -9,11 +9,13 @@ permissions:
   contents: read
 
 jobs:
-  test-and-dispatch:
-    if: github.repository == 'mtekllc/ulfius'
+  test:
+    if: github.repository == 'mtekllc/ulfius' && github.ref == 'refs/heads/mtekllc-dev'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Install build dependencies
         run: |
           sudo apt-get update
@@ -39,6 +41,12 @@ jobs:
         run: |
           make -C src -j"$(nproc)"
           LD_LIBRARY_PATH=/usr/local/lib make -C test VERBOSE=1 test
+  dispatch:
+    needs: test
+    if: github.repository == 'mtekllc/ulfius' && github.ref == 'refs/heads/mtekllc-dev' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
       - name: Trigger base image rebuild
         env:
           GH_PAT: ${{ secrets.GH_PAT }}

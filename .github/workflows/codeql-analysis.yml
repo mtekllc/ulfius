@@ -11,6 +11,7 @@ on:
 
 jobs:
   analyse:
+    if: github.repository == 'babelouest/ulfius'
     name: Analyse
     runs-on: ubuntu-latest
 

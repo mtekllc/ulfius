@@ -2,6 +2,7 @@ on: [push, pull_request]
 
 jobs:
   build:
+    if: github.repository == 'babelouest/ulfius'
 
     runs-on: ubuntu-latest
     
